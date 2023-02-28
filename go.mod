@@ -11,7 +11,7 @@ require (
 	github.com/lib/pq v1.10.2 // indirect
 	github.com/shurcooL/githubv4 v0.0.0-20201206200315-234843c633fa
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect
-	github.com/spf13/cobra v1.2.0
+	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.8.1
 	go.opentelemetry.io/otel/trace v1.13.0
 	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
