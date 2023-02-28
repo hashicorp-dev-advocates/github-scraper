@@ -17,14 +17,23 @@ jobs:
           go-version: 1.19
 
       - name: Build
-        run: go build -v -o dist/github .
+        run: |
+          GOOS=linux GOARCH=amd64 go build -v -o dist/github-linux-amd64 .
+          GOOS=darwin GOARCH=amd64 go build -v -o dist/github-darwin-amd64 .
+          GOOS=windows GOARCH=amd64 go build -v -o dist/github-windows-amd64.exe .
 
       - name: Test
         run: go test -v ./...
 
+      - name: Zip
+        run: |
+          zip dist/github-linux-amd64.zip dist/github-linux-amd64
+          zip dist/github-darwin-amd64.zip dist/github-darwin-amd64
+          zip dist/github-windows-amd64.zip dist/github-windows-amd64.exe
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/*
+          files: dist/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
