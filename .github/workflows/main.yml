@@ -29,9 +29,10 @@ jobs:
 
       - name: Zip
         run: |
-          zip dist/github-linux-amd64.zip dist/github-linux-amd64
-          zip dist/github-darwin-amd64.zip dist/github-darwin-amd64
-          zip dist/github-windows-amd64.zip dist/github-windows-amd64.exe
+          cd dist
+          zip github-linux-amd64.zip github-linux-amd64
+          zip github-darwin-amd64.zip github-darwin-amd64
+          zip github-windows-amd64.zip github-windows-amd64.exe
 
       - name: Release
         uses: softprops/action-gh-release@v1
