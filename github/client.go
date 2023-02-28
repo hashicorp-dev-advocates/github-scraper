@@ -530,6 +530,8 @@ func (g *GithubImpl) QueryMetrics(owner string, repository string) (database.Met
 	metrics.Owner = owner
 	metrics.Repository = repository
 
+	var page int
+
 	g.logger.Debug("Querying traffic clones", "owner", owner, "repository", repository)
 	tc, _, err := g.v3.Repositories.ListTrafficClones(ctx, owner, repository, &githubv3.TrafficBreakdownOptions{})
 	if err != nil {
@@ -539,38 +541,66 @@ func (g *GithubImpl) QueryMetrics(owner string, repository string) (database.Met
 	metrics.Clones = database.TrafficClones{
 		Owner:      owner,
 		Repository: repository,
+		Date:       time.Now().UTC().Round(0),
 		Count:      tc.GetCount(),
 		Uniques:    tc.GetUniques(),
 	}
 
 	g.logger.Debug("Querying forks", "owner", owner, "repository", repository)
-	forks, _, err := g.v3.Repositories.ListForks(ctx, owner, repository, &githubv3.RepositoryListForksOptions{})
-	if err != nil {
-		return metrics, fmt.Errorf("could not query forks: %v+", err)
-	}
+	page = 1
+	for {
+		forks, response, err := g.v3.Repositories.ListForks(ctx, owner, repository, &githubv3.RepositoryListForksOptions{ListOptions: githubv3.ListOptions{Page: page, PerPage: 100}})
+		if err != nil {
+			return metrics, fmt.Errorf("could not query forks: %v+", err)
+		}
 
-	for _, f := range forks {
-		metrics.Forks = append(metrics.Forks, f.GetFullName())
+		for _, f := range forks {
+			metrics.Forks = append(metrics.Forks, f.GetFullName())
+		}
+
+		if response.NextPage == 0 {
+			break
+		}
+
+		page++
 	}
 
 	g.logger.Debug("Querying stargazers", "owner", owner, "repository", repository)
-	stars, _, err := g.v3.Activity.ListStargazers(ctx, owner, repository, &githubv3.ListOptions{})
-	if err != nil {
-		return metrics, fmt.Errorf("could not query stargazers: %v+", err)
-	}
+	page = 1
+	for {
+		stars, response, err := g.v3.Activity.ListStargazers(ctx, owner, repository, &githubv3.ListOptions{Page: page, PerPage: 100})
+		if err != nil {
+			return metrics, fmt.Errorf("could not query stargazers: %v+", err)
+		}
 
-	for _, s := range stars {
-		metrics.Stars = append(metrics.Stars, s.GetUser().GetLogin())
+		for _, s := range stars {
+			metrics.Stars = append(metrics.Stars, s.GetUser().GetLogin())
+		}
+
+		if response.NextPage == 0 {
+			break
+		}
+
+		page++
 	}
 
 	g.logger.Debug("Querying watchers", "owner", owner, "repository", repository)
-	watches, _, err := g.v3.Activity.ListWatchers(ctx, owner, repository, &githubv3.ListOptions{})
-	if err != nil {
-		return metrics, fmt.Errorf("could not query watchers: %v+", err)
-	}
+	page = 1
+	for {
+		watches, response, err := g.v3.Activity.ListWatchers(ctx, owner, repository, &githubv3.ListOptions{Page: page, PerPage: 100})
+		if err != nil {
+			return metrics, fmt.Errorf("could not query watchers: %v+", err)
+		}
 
-	for _, w := range watches {
-		metrics.Watches = append(metrics.Watches, w.GetLogin())
+		for _, w := range watches {
+			metrics.Watches = append(metrics.Watches, w.GetLogin())
+		}
+
+		if response.NextPage == 0 {
+			break
+		}
+
+		page++
 	}
 
 	g.logger.Debug("Querying traffic views", "owner", owner, "repository", repository)
@@ -582,41 +612,60 @@ func (g *GithubImpl) QueryMetrics(owner string, repository string) (database.Met
 	metrics.Views = database.TrafficViews{
 		Owner:      owner,
 		Repository: repository,
+		Date:       time.Now().UTC().Round(0),
 		Count:      tv.GetCount(),
 		Uniques:    tv.GetUniques(),
 	}
 
 	g.logger.Debug("Querying traffic paths", "owner", owner, "repository", repository)
-	paths, _, err := g.v3.Repositories.ListTrafficPaths(ctx, owner, repository)
-	if err != nil {
-		return metrics, fmt.Errorf("could not query traffic paths: %v+", err)
-	}
+	page = 1
+	for {
+		paths, response, err := g.v3.Repositories.ListTrafficPaths(ctx, owner, repository)
+		if err != nil {
+			return metrics, fmt.Errorf("could not query traffic paths: %v+", err)
+		}
 
-	for _, p := range paths {
-		metrics.Paths = append(metrics.Paths, database.TrafficPath{
-			Owner:      owner,
-			Repository: repository,
-			Path:       p.GetPath(),
-			Title:      p.GetTitle(),
-			Count:      p.GetCount(),
-			Uniques:    p.GetUniques(),
-		})
+		for _, p := range paths {
+			metrics.Paths = append(metrics.Paths, database.TrafficPath{
+				Owner:      owner,
+				Repository: repository,
+				Date:       time.Now().UTC().Round(0),
+				Path:       p.GetPath(),
+				Title:      p.GetTitle(),
+				Count:      p.GetCount(),
+				Uniques:    p.GetUniques(),
+			})
+		}
+
+		if response.NextPage == 0 {
+			break
+		}
+
+		page++
 	}
 
 	g.logger.Debug("Querying traffic referrers", "owner", owner, "repository", repository)
-	referrers, _, err := g.v3.Repositories.ListTrafficReferrers(ctx, owner, repository)
-	if err != nil {
-		return metrics, fmt.Errorf("could not query traffic referrers: %v+", err)
-	}
+	page = 1
+	for {
+		referrers, response, err := g.v3.Repositories.ListTrafficReferrers(ctx, owner, repository)
+		if err != nil {
+			return metrics, fmt.Errorf("could not query traffic referrers: %v+", err)
+		}
 
-	for _, r := range referrers {
-		metrics.Referrers = append(metrics.Referrers, database.TrafficReferrer{
-			Owner:      owner,
-			Repository: repository,
-			Referrer:   r.GetReferrer(),
-			Count:      r.GetCount(),
-			Uniques:    r.GetUniques(),
-		})
+		for _, r := range referrers {
+			metrics.Referrers = append(metrics.Referrers, database.TrafficReferrer{
+				Owner:      owner,
+				Repository: repository,
+				Date:       time.Now().UTC().Round(0),
+				Referrer:   r.GetReferrer(),
+				Count:      r.GetCount(),
+				Uniques:    r.GetUniques(),
+			})
+		}
+
+		if response.NextPage == 0 {
+			break
+		}
 	}
 
 	return metrics, nil

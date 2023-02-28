@@ -178,34 +178,38 @@ type Metrics struct {
 }
 
 type TrafficClones struct {
-	Owner      string `json:"-" db:"owner"`
-	Repository string `json:"-" db:"repository"`
-	Count      int    `json:"count" db:"count"`
-	Uniques    int    `json:"uniques" db:"uniques"`
+	Owner      string    `json:"-" db:"owner"`
+	Repository string    `json:"-" db:"repository"`
+	Date       time.Time `json:"date" db:"date"`
+	Count      int       `json:"count" db:"count"`
+	Uniques    int       `json:"uniques" db:"uniques"`
 }
 
 type TrafficViews struct {
-	Owner      string `json:"-" db:"owner"`
-	Repository string `json:"-" db:"repository"`
-	Count      int    `json:"count" db:"count"`
-	Uniques    int    `json:"uniques" db:"uniques"`
+	Owner      string    `json:"-" db:"owner"`
+	Repository string    `json:"-" db:"repository"`
+	Date       time.Time `json:"date" db:"date"`
+	Count      int       `json:"count" db:"count"`
+	Uniques    int       `json:"uniques" db:"uniques"`
 }
 
 type TrafficPath struct {
-	Path       string `json:"path" db:"path"`
-	Owner      string `json:"-" db:"owner"`
-	Repository string `json:"-" db:"repository"`
-	Title      string `json:"title" db:"title"`
-	Count      int    `json:"count" db:"count"`
-	Uniques    int    `json:"uniques" db:"uniques"`
+	Path       string    `json:"path" db:"path"`
+	Owner      string    `json:"-" db:"owner"`
+	Repository string    `json:"-" db:"repository"`
+	Date       time.Time `json:"date" db:"date"`
+	Title      string    `json:"title" db:"title"`
+	Count      int       `json:"count" db:"count"`
+	Uniques    int       `json:"uniques" db:"uniques"`
 }
 
 type TrafficReferrer struct {
-	Referrer   string `json:"referrer" db:"referrer"`
-	Owner      string `json:"-" db:"owner"`
-	Repository string `json:"-" db:"repository"`
-	Count      int    `json:"count" db:"count"`
-	Uniques    int    `json:"uniques" db:"uniques"`
+	Referrer   string    `json:"referrer" db:"referrer"`
+	Owner      string    `json:"-" db:"owner"`
+	Repository string    `json:"-" db:"repository"`
+	Date       time.Time `json:"date" db:"date"`
+	Count      int       `json:"count" db:"count"`
+	Uniques    int       `json:"uniques" db:"uniques"`
 }
 
 // Metadata
@@ -865,7 +869,7 @@ func (db *DatabaseImpl) AddMetrics(input Metrics) (Metrics, error) {
 			:stars
 		)
 		ON CONFLICT (owner, repository) DO UPDATE
-		SET 
+		SET
 			forks = EXCLUDED.forks,
 			watches = EXCLUDED.watches,
 			stars = EXCLUDED.stars
@@ -890,16 +894,18 @@ func (db *DatabaseImpl) AddTrafficClones(input TrafficClones) (TrafficClones, er
 		`INSERT INTO github_metrics_clones (
 			owner,
 			repository,
+			date,
 			count,
 			uniques
 		)
 		VALUES (
 			:owner,
 			:repository,
+			:date,
 			:count,
 			:uniques
 		)
-		ON CONFLICT (owner, repository) DO UPDATE
+		ON CONFLICT (owner, repository, date) DO UPDATE
 		SET 
 			count = EXCLUDED.count,
 			uniques = EXCLUDED.uniques
@@ -924,16 +930,18 @@ func (db *DatabaseImpl) AddTrafficViews(input TrafficViews) (TrafficViews, error
 		`INSERT INTO github_metrics_views (
 			owner,
 			repository,
+			date,
 			count,
 			uniques
 		)
 		VALUES (
 			:owner,
 			:repository,
+			:date,
 			:count,
 			:uniques
 		)
-		ON CONFLICT (owner, repository) DO UPDATE
+		ON CONFLICT (owner, repository, date) DO UPDATE
 		SET 
 			count = EXCLUDED.count,
 			uniques = EXCLUDED.uniques
@@ -959,6 +967,7 @@ func (db *DatabaseImpl) AddTrafficReferrer(input TrafficReferrer) (TrafficReferr
 			owner,
 			repository,
 			referrer,
+			date,
 			count,
 			uniques
 		)
@@ -966,10 +975,11 @@ func (db *DatabaseImpl) AddTrafficReferrer(input TrafficReferrer) (TrafficReferr
 			:owner,
 			:repository,
 			:referrer,
+			:date,
 			:count,
 			:uniques
 		)
-		ON CONFLICT (owner, repository, referrer) DO UPDATE
+		ON CONFLICT (owner, repository, referrer, date) DO UPDATE
 		SET 
 			count = EXCLUDED.count,
 			uniques = EXCLUDED.uniques
@@ -995,6 +1005,7 @@ func (db *DatabaseImpl) AddTrafficPath(input TrafficPath) (TrafficPath, error) {
 			owner,
 			repository,
 			path,
+			date,
 			title,
 			count,
 			uniques
@@ -1003,11 +1014,12 @@ func (db *DatabaseImpl) AddTrafficPath(input TrafficPath) (TrafficPath, error) {
 			:owner,
 			:repository,
 			:path,
+			:date,
 			:title,
 			:count,
 			:uniques
 		)
-		ON CONFLICT (owner, repository, path) DO UPDATE
+		ON CONFLICT (owner, repository, path, date) DO UPDATE
 		SET 
 			title = EXCLUDED.title,
 			count = EXCLUDED.count,

@@ -21,6 +21,7 @@ var metricsCmd = &cobra.Command{
 		if format == "sql" {
 			// Write the metrics to the database.
 			db.AddMetrics(metrics)
+
 			db.AddTrafficClones(metrics.Clones)
 			db.AddTrafficViews(metrics.Views)
 

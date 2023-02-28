@@ -189,36 +189,40 @@ CREATE TABLE IF NOT EXISTS github_metrics (
 CREATE TABLE IF NOT EXISTS github_metrics_clones (
   repository VARCHAR(255) NOT NULL, -- github_metadata_repository
   owner VARCHAR(255) NOT NULL, -- github_metadata_owner
+  date DATE,
   count BIGINT,
   uniques BIGINT,
-  PRIMARY KEY (repository, owner)
+  PRIMARY KEY (repository, owner, date)
 );
 
 CREATE TABLE IF NOT EXISTS github_metrics_views (
   repository VARCHAR(255) NOT NULL, -- github_metadata_repository
   owner VARCHAR(255) NOT NULL, -- github_metadata_owner
+  date DATE,
   count BIGINT,
   uniques BIGINT,
-  PRIMARY KEY (repository, owner)
+  PRIMARY KEY (repository, owner, date)
 );
 
 CREATE TABLE IF NOT EXISTS github_metrics_paths (
   path VARCHAR(255) NOT NULL,
   repository VARCHAR(255) NOT NULL, -- github_metadata_repository
   owner VARCHAR(255) NOT NULL, -- github_metadata_owner
+  date DATE,
   title VARCHAR(255) NOT NULL,
   count BIGINT,
   uniques BIGINT,
-  PRIMARY KEY (repository, owner, path)
+  PRIMARY KEY (repository, owner, path, date)
 );
 
 CREATE TABLE IF NOT EXISTS github_metrics_referrers (
   referrer VARCHAR(255) NOT NULL,
   repository VARCHAR(255) NOT NULL, -- github_metadata_repository
   owner VARCHAR(255) NOT NULL, -- github_metadata_owner
+  date DATE,
   count BIGINT,
   uniques BIGINT,
-  PRIMARY KEY (repository, owner, referrer)
+  PRIMARY KEY (repository, owner, referrer, date)
 );
 
 GRANT ALL ON ALL TABLES IN SCHEMA "public" TO $POSTGRES_USER;
