@@ -11,7 +11,6 @@ import (
 	"github.com/eveldcorp/devrel-github/github"
 	"github.com/hashicorp/go-hclog"
 	"github.com/spf13/cobra"
-	"go.opentelemetry.io/otel/trace"
 )
 
 var cfg *config.Config
@@ -19,7 +18,6 @@ var cfg *config.Config
 var db database.Database
 var gh github.Github
 var logger hclog.Logger
-var tracer trace.Tracer
 var err error
 
 // CLI parameters.
