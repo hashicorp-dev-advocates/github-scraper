@@ -22,6 +22,8 @@ jobs:
           GOOS=darwin GOARCH=amd64 go build -v -o dist/github-darwin-amd64 .
           GOOS=windows GOARCH=amd64 go build -v -o dist/github-windows-amd64.exe .
 
+          chmod +x dist/*
+
       - name: Test
         run: go test -v ./...
 
