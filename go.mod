@@ -13,6 +13,6 @@ require (
 	github.com/shurcooL/graphql v0.0.0-20200928012149-18c5c3165e3a // indirect
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.8.1
-	go.opentelemetry.io/otel/trace v1.13.0
+	go.opentelemetry.io/otel/trace v1.14.0
 	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
 )
