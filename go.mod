@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/google/go-github/v50 v50.1.0
-	github.com/hashicorp/go-hclog v0.16.1
+	github.com/hashicorp/go-hclog v1.4.0
 	github.com/hashicorp/go-retryablehttp v0.7.2
 	github.com/jackc/pgx/v5 v5.3.1
 	github.com/jmoiron/sqlx v1.3.5
