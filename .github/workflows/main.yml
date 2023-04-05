@@ -21,6 +21,9 @@ jobs:
           GOOS=linux GOARCH=amd64 go build -v -o dist/github-linux-amd64 .
           GOOS=darwin GOARCH=amd64 go build -v -o dist/github-darwin-amd64 .
           GOOS=windows GOARCH=amd64 go build -v -o dist/github-windows-amd64.exe .
+          GOOS=linux GOARCH=arm64 go build -v -o dist/github-linux-arm64 .
+          GOOS=darwin GOARCH=arm64 go build -v -o dist/github-darwin-arm64 .
+          GOOS=windows GOARCH=arm64 go build -v -o dist/github-windows-arm64.exe .
 
           chmod +x dist/*
 
@@ -44,6 +47,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
 
@@ -53,6 +57,9 @@ jobs:
           zip github-linux-amd64.zip github-linux-amd64
           zip github-darwin-amd64.zip github-darwin-amd64
           zip github-windows-amd64.zip github-windows-amd64.exe
+          zip github-linux-arm64.zip github-linux-arm64
+          zip github-darwin-arm64.zip github-darwin-arm64
+          zip github-windows-arm64.zip github-windows-arm64.exe
 
       - name: Release
         uses: softprops/action-gh-release@v1
