@@ -1,5 +1,34 @@
 # GitHub data scraper
 
+## Quickstart
+
+Set environment variables for `github` CLI and postgres.
+
+```shell
+export GITHUB_TOKEN=
+export POSTGRES_USER=user
+export POSTGRES_PASSWORD=password
+export POSTGRES_DB=database
+```
+
+Build binary.
+
+```shell
+go build -v -o dist/github .
+```
+
+Start local database.
+
+```shell
+make
+```
+
+Start local database.
+
+```shell
+./dist/github issues -f sql -o postgres://user:password@localhost:5432/database hashicorp consul
+```
+
 ## Releases
 
 Retrieve releases created in the repository:
