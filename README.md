@@ -1,5 +1,13 @@
 # GitHub data scraper
 
+## Setup
+
+Set environment variables for `github` CLI.
+
+```shell
+export GITHUB_TOKEN=
+```
+
 ## Releases
 
 Retrieve releases created in the repository:
