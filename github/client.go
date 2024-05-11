@@ -322,7 +322,7 @@ func (g *GithubImpl) QueryPullrequests(owner string, repository string, since ti
 			// Query additional comments
 			if p.Comments.PageInfo.HasNextPage {
 				g.logger.Debug("Need to query additional comments")
-				comments, err := g.QueryIssueComments(owner, repository, p.Number, p.Comments.PageInfo.EndCursor)
+				comments, err := g.QueryPullrequestComments(owner, repository, p.Number, p.Comments.PageInfo.EndCursor)
 				if err != nil {
 					return pullrequests, err
 				}
