@@ -225,5 +225,5 @@ CREATE TABLE IF NOT EXISTS github_metrics_referrers (
   PRIMARY KEY (repository, owner, referrer, date)
 );
 
-GRANT ALL ON ALL TABLES IN SCHEMA "public" TO $POSTGRES_USER;
+GRANT ALL ON ALL TABLES IN SCHEMA "public" TO "$POSTGRES_USER";
 EOSQL
